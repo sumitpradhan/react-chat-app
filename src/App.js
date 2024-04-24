@@ -9,11 +9,13 @@ import { auth, db } from "./components/lib/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
 import { addsignInUser, removeSignOutUser } from "./redux/slices/userSlice";
+import { removeChat } from "./redux/slices/chatSlice";
 
 function App() {
   
   const dispatch=useDispatch();
   const userLoggedIn= useSelector((store)=>store.user);
+  const userChat= useSelector((store)=>store.chat);
   useEffect(()=>{
     const unsubscribe =onAuthStateChanged(auth, async (user) => {
       if (user) 
@@ -38,6 +40,7 @@ function App() {
       else 
       {
         dispatch(removeSignOutUser());
+        dispatch(removeChat())
       }
     });
     
@@ -52,8 +55,10 @@ function App() {
       {
          userLoggedIn?(<>
             <List/>
-            <Chat/>
-            <Detail/>
+            {userChat.chatId &&<>
+              <Chat/>
+              <Detail/>
+            </>}
           </>):(<LoginComp/>)
       }
       <Notification/>

@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { doc, setDoc} from "firebase/firestore";
 import { auth,db } from '../lib/firebase'
 import uploadFile from '../lib/uploadFile';
-import { useDispatch } from 'react-redux';
 
 const LoginComp = () => {
 

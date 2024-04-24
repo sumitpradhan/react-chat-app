@@ -2,33 +2,59 @@ import "./chat.css"
 import React, { useState,useRef ,useEffect } from 'react'
 import EmojiPicker from "emoji-picker-react"
 import { useSelector } from 'react-redux';
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 const Chat = () => {
   const [openEmoji,setOpenEmoji] =useState(false);
-  const [message,setMessage] =useState("");
-
+  const [text,setText] =useState("");
+  const [chat,setChat]=useState(null);
   const endRef =useRef(null);//Auto scroll to bottom
   const userLoggedIn= useSelector((store)=>store.user);
+  const userChat= useSelector((store)=>store.chat);
+
+console.log(userChat);
 
   const handleEmojiCick=(e)=>{
     console.log(e.emoji);
-    const msg = message;
-    setMessage(msg+e.emoji);
+    const msg = text;
+    setText(msg+e.emoji);
   }
   
   useEffect(()=>{
     console.log(endRef);
     endRef.current?.scrollIntoView({behaviour:"smooth"});
   },[]);
+ 
+  useEffect(()=>{
+    const unSub= onSnapshot(doc(db,"chats",userChat?.chatId),(res)=>{
+      setChat(res.data());//getting messages from chat
+    })
+
+    return ()=>{
+      unSub();
+    }
+  },[])
+
+  const handleSend=()=>{
+  if(text==="") return;
+    try{
+
+    }
+    catch(err)
+    {
+      
+    }
+  }
 
   return (
     <div className="chat">
       {/* TOP DIV for header*/}
       <div className="top">
         <div className="user">
-           <img src={userLoggedIn?userLoggedIn.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
+           <img src={userChat?.user?.avatar?userChat?.user?.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
             <div className="texts">
-                <span>{userLoggedIn.username}</span>
+                <span>{userChat?.user?.username}</span>
                 <p>Hello</p>
             </div>
         </div>
@@ -42,43 +68,15 @@ const Chat = () => {
 
       {/* Center DIV for Chats*/}
       <div className="center">
-        <div className="message">
-        <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
+        {chat?.messages?.map((message)=>(
+            <div className="message own" key={message?.createAt}>
             <div className="texts">
-                <p>John Doe</p>
-                <span>1 min ago</span>
+            {message?.img && <img src={require('../../Assets/Img/avatar.png')} alt="profile" />}
+            <p>{message?.text}</p>
             </div>
         </div>
+        ))}      
 
-        <div className="message own">
-            <div className="texts">
-            <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
-                <p>John Doe</p>
-                <span>1 min ago</span>
-            </div>
-        </div>
-
-        <div className="message">
-        <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
-            <div className="texts">
-                <p>John Doe</p>
-                <span>1 min ago</span>
-            </div>
-        </div>
-        <div className="message">
-        <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
-            <div className="texts">
-                <p>John Doe</p>
-                <span>1 min ago</span>
-            </div>
-        </div>
-        <div className="message own">
-            <div className="texts">
-            <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
-                <p>John Doe</p>
-                <span>1 min ago</span>
-            </div>
-        </div>
 
         <div ref={endRef}>
 
@@ -96,8 +94,8 @@ const Chat = () => {
 
         <input type="text" 
         placeholder="Type a message..."
-        value={message}      
-        onChange={e=>setMessage(e.target.value)}/>
+        value={text}      
+        onChange={e=>setText(e.target.value)}/>
 
         <div className="emoji">
           <img src={require('../../Assets/Img/emoji.png')} alt="profile" onClick={()=>setOpenEmoji(!openEmoji)} />
@@ -106,7 +104,7 @@ const Chat = () => {
             </div>            
         </div>
 
-        <button className="sendButton">Send</button>
+        <button className="sendButton" onClick={handleSend}>Send</button>
       </div>
     </div>
   )

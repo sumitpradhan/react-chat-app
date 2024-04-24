@@ -5,13 +5,15 @@ import { auth } from "../lib/firebase";
 
 const Detail = () => {
   const userLoggedIn= useSelector((store)=>store.user);
+  const userChat= useSelector((store)=>store.chat);
+
   return (
     <div className="detail">
 
         <div className="user">
-        <img src={userLoggedIn?userLoggedIn.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
+        <img src={userChat?.user?.avatar?userChat?.user?.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
             <div className="texts">
-                <h2>{userLoggedIn.username}</h2>
+                <h2>{userChat?.user?.username}</h2>
                 <p>Hello</p>
             </div>
         </div>

@@ -1,22 +1,22 @@
 import {useEffect, useState} from 'react'
 import "./chatList.css"
 import AddUser from '../../addUser/AddUser';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from '../../lib/firebase';
+import { changeChat } from '../../../redux/slices/chatSlice';
 
 const ChatLists = () => {
 
   const [addMode,setAddMode]=useState(false);
   const [chats,setChats]=useState([]);
 
-
+    const dispatch=useDispatch()
   const loggedInUser= useSelector((store)=>store.user);
 
   useEffect(()=>{
         const unsub = onSnapshot(doc(db, "usersChats", loggedInUser.uid), async(resp) => {
-                        const items=resp.data().chat;
-
+                        const items=resp.data().chats;
                         const promises=items.map(async (item)=>{
                             const userRef = doc(db, "users",item.receiverId);
                             const userSnap = await getDoc(userRef);
@@ -33,7 +33,12 @@ const ChatLists = () => {
     return ()=>{
         unsub();
     }
-  },[loggedInUser.uid]);
+  },[]);
+  
+const handleChatSelect=(chat)=>{
+    console.log(chat);
+    dispatch(changeChat(chat))
+}
 
   return (
     <div className="chatList">
@@ -48,23 +53,14 @@ const ChatLists = () => {
 
         {
           chats.map((chat)=>(
-            <div className="item" key={chat.chatId}>
-                <img src={require('../../../Assets/Img/avatar.png')} alt="profile" />
+            <div className="item" key={chat.chatId} onClick={()=>handleChatSelect(chat)}>
+                <img src={chat.user.avatar} alt="profile" />
                 <div className="texts">
-                    <h2>John Doe</h2>
+                    <h2>{chat.username}</h2>
                     <p>{chat.chatId}</p>
                 </div>
             </div>
-          ))
-        /*chats?.map((chat)=>(
-           <div className="item" key={chat.chatId}>
-                <img src={require('../../../Assets/Img/avatar.png')} alt="profile" />
-                <div className="texts">
-                    <h2>John Doe</h2>
-                    <p>{chat.chatId}</p>
-                </div>
-            </div>
-        ))*/}
+          ))}
 
         {addMode && <AddUser/>}
     </div>
