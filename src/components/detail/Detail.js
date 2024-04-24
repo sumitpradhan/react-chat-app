@@ -1,14 +1,17 @@
 import "./detail.css"
 import React from 'react'
+import { useSelector } from 'react-redux';
+import { auth } from "../lib/firebase";
 
 const Detail = () => {
+  const userLoggedIn= useSelector((store)=>store.user);
   return (
     <div className="detail">
 
         <div className="user">
-            <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
+        <img src={userLoggedIn?userLoggedIn.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
             <div className="texts">
-                <h2>John Doe</h2>
+                <h2>{userLoggedIn.username}</h2>
                 <p>Hello</p>
             </div>
         </div>
@@ -79,7 +82,7 @@ const Detail = () => {
           </div>
 
           <button>Block User</button>
-          <button className="logout">Logout</button>
+          <button className="logout" onClick={()=>auth.signOut()}>Logout</button>
         </div>
 
     </div>

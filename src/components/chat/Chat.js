@@ -1,12 +1,14 @@
 import "./chat.css"
 import React, { useState,useRef ,useEffect } from 'react'
 import EmojiPicker from "emoji-picker-react"
+import { useSelector } from 'react-redux';
 
 const Chat = () => {
   const [openEmoji,setOpenEmoji] =useState(false);
   const [message,setMessage] =useState("");
 
   const endRef =useRef(null);//Auto scroll to bottom
+  const userLoggedIn= useSelector((store)=>store.user);
 
   const handleEmojiCick=(e)=>{
     console.log(e.emoji);
@@ -15,6 +17,7 @@ const Chat = () => {
   }
   
   useEffect(()=>{
+    console.log(endRef);
     endRef.current?.scrollIntoView({behaviour:"smooth"});
   },[]);
 
@@ -23,9 +26,9 @@ const Chat = () => {
       {/* TOP DIV for header*/}
       <div className="top">
         <div className="user">
-        <img src={require('../../Assets/Img/avatar.png')} alt="profile" />
+           <img src={userLoggedIn?userLoggedIn.avatar:require('../../Assets/Img/avatar.png')} alt="profile" />
             <div className="texts">
-                <span>John Doe</span>
+                <span>{userLoggedIn.username}</span>
                 <p>Hello</p>
             </div>
         </div>

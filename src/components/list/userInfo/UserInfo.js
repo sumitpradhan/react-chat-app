@@ -1,11 +1,14 @@
 import React from 'react'
 import "./userInfo.css"
+import { useSelector } from 'react-redux';
 const UserInfo = () => {
+  
+  const userLoggedIn= useSelector((store)=>store.user);
   return (
     <div className="userInfo">
         <div className="user">
-            <img src={require('../../../Assets/Img/avatar.png')} alt="profile" />
-            <h2>John Doe</h2>
+            <img src={userLoggedIn?userLoggedIn.avatar:require('../../../Assets/Img/avatar.png')} alt="profile" />
+            <h2>{userLoggedIn.username}</h2>
         </div>
         <div className="icons">
             <img src={require("../../../Assets/Img/more.png")} alt="more" />
