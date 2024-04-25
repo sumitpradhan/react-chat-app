@@ -16,10 +16,12 @@ function App() {
   const dispatch=useDispatch();
   const userLoggedIn= useSelector((store)=>store.user);
   const userChat= useSelector((store)=>store.chat);
+  console.log(userChat);
   useEffect(()=>{
     const unsubscribe =onAuthStateChanged(auth, async (user) => {
       if (user) 
       {
+        console.log("onAuthStateChanged")
           const docRef = doc(db, "users",user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
@@ -55,7 +57,7 @@ function App() {
       {
          userLoggedIn?(<>
             <List/>
-            {userChat.chatId &&<>
+            {userChat?.chatId&&<>
               <Chat/>
               <Detail/>
             </>}

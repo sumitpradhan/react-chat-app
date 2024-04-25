@@ -10,13 +10,17 @@ const chatSlice=createSlice({
     },
     reducers:{
         changeChat:(state,action)=>{
+            console.log(action.payload);
             const  {chatId,user,receiverId} = action.payload;
             state.chatId=chatId;
             state.user=user;
 
         },
         removeChat:(state)=>{
-            return null
+            state.chatId=null;
+            state.user=null;
+            state.isCurrentUserBlocked=false;
+            state.isRecieverBlocked=false;
         }
     }
 
